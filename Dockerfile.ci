@@ -1,0 +1,22 @@
+FROM {{.Base}}:{{.Version}}
+
+#
+# Agent Docker Image
+#
+# This image enhances the base image in the root project directory `./Dockerfile` with stuff needed for CI
+# (AWS CLI, browser unit testing etc.)
+# Always ensure it is built before this one is built.
+
+RUN mkdir -p /var/app/current
+WORKDIR /var/app/current
+COPY . /var/app/current/
+RUN NODE_ENV=development npm install   # Installs all packages so we can test etc.
+RUN npm run package                    # This step should run all tests etc.
+RUN npm prune --production             # Removes non-Production packages
+RUN rm -rf /var/app/current/lib        # Removes other cruft
+ENV NODE_ENV production                # Sets Production mode for performant Node
+
+EXPOSE 80
+ENV PORT 80
+
+#ENTRYPOINT ["node", "./dist/index.js"]
