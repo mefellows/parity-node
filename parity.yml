@@ -12,6 +12,7 @@ loglevel: 2
 run:
   - name: compose
     config:
+      image_name: {{.Base}}
       composefile: docker-compose.yml.dev
 
 # Configures the synchronisation Plugin, using Mirror () by default
